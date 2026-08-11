@@ -26,6 +26,8 @@ export default function CourseMap({ currentSession = 2 }) {
     .flatMap((session) => session.topics)
     .find((topic) => topic.id === expandedTopicId);
 
+  const activeSession = courseMap.find((session) => session.id === currentSession);
+
   return (
     <div className="w-full max-w-[1750px] mx-auto mb-10">
       <div className="brutal-card bg-brutal-white p-8">
@@ -86,9 +88,38 @@ export default function CourseMap({ currentSession = 2 }) {
             );
           })}
         </div>
+      </div>
 
-        {expandedTopic && (
-          <div className="mt-6 border-4 border-brutal-black bg-brutal-cream p-7 animate-slide-in-up">
+      {/* 세부 주제가 펼쳐지지 않은 상태에서는 오늘 세션을 별도의 전체 폭 박스로 확대 표시 */}
+      {!expandedTopic && activeSession && (
+        <div className="brutal-card bg-brutal-white p-8 mt-12">
+          <div
+            className={`border-4 border-brutal-black p-10 ${SESSION_BG.current} brutal-shadow-sm animate-slide-in-up`}
+          >
+            <div className="flex items-baseline justify-center gap-4 mb-14 whitespace-nowrap">
+              <span className="font-black text-6xl">
+                👉 <span className="animate-blink">Session {activeSession.id}</span>
+              </span>
+              <span className="text-3xl font-bold text-blue-800">{activeSession.title}</span>
+            </div>
+
+            <div className="flex flex-wrap gap-4">
+              {activeSession.topics.map((topic) => (
+                <span
+                  key={topic.id}
+                  className="text-3xl font-bold px-8 py-5 border-4 border-brutal-black bg-brutal-white/70 brutal-shadow-sm whitespace-nowrap"
+                >
+                  {topic.label}
+                </span>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {expandedTopic && (
+        <div className="brutal-card bg-brutal-white p-8 mt-12">
+          <div className="border-4 border-brutal-black bg-brutal-cream p-7 animate-slide-in-up">
             <div className="font-black text-3xl mb-3">{expandedTopic.label}</div>
             <p className="text-xl font-semibold mb-6 opacity-90">{expandedTopic.desc}</p>
 
@@ -101,8 +132,8 @@ export default function CourseMap({ currentSession = 2 }) {
               ))}
             </div>
           </div>
-        )}
-      </div>
+        </div>
+      )}
     </div>
   );
 }

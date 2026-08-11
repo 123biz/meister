@@ -247,6 +247,19 @@ body {
   animation: rocketLaunch 1.5s ease-in forwards;
 }
 
+@keyframes blink {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.3;
+  }
+}
+
+.animate-blink {
+  animation: blink 4s ease-in-out infinite;
+}
+
 /* ── 스크롤바 커스텀 ── */
 ::-webkit-scrollbar {
   width: 12px;
