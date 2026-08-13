@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { courseMap } from "@/lib/courseMap";
 
 const SESSION_BG = {
-  done: "bg-brutal-green",
+  done: "bg-brutal-gray",
   current: "bg-brutal-yellow",
   upcoming: "bg-brutal-gray",
 };
@@ -50,7 +50,6 @@ export default function CourseMap({ currentSession = 2 }) {
                   <span className="font-black text-xl">
                     {isCurrent && "👉 "}
                     Session {session.id}
-                    {status === "done" && " ✅"}
                   </span>
                   <span className="text-base font-bold text-blue-800">{session.title}</span>
                 </div>
