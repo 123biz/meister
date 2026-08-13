@@ -75,7 +75,7 @@ export default function CourseMap({ currentSession = 2 }) {
                         key={topic.id}
                         onClick={() => setExpandedTopicId(isActive ? null : topic.id)}
                         className={`brutal-btn !normal-case text-base px-4 py-3 whitespace-nowrap ${
-                          isActive ? "bg-brutal-pink" : "bg-brutal-white"
+                          isActive ? "bg-brutal-pink text-white" : "bg-brutal-white"
                         }`}
                       >
                         {topic.label}
@@ -127,7 +127,7 @@ export default function CourseMap({ currentSession = 2 }) {
                 <div key={child.label} className="w-80 border-2 border-brutal-black bg-brutal-white p-5">
                   <div className="font-black text-2xl mb-3">{child.label}</div>
                   <div className="text-lg font-semibold opacity-80">{child.desc}</div>
-                  {child.note && <div className="mt-2 text-lg font-black text-brutal-pink">{child.note}</div>}
+                  {child.note && <div className="mt-2 text-lg font-black text-blue-700">{child.note}</div>}
                 </div>
               ))}
             </div>
