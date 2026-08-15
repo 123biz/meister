@@ -8,7 +8,7 @@ const outfit = Outfit({
 
 // 메타데이터: SEO 기본 설정
 export const metadata = {
-  title: "Claude Code 🚀 강의 로드맵",
+  title: "AI제조혁신 2기🚀강의 로드맵",
   description: "AI제조혁신 코디네이터/마이스터 과정의 강의 전체 로드맵입니다.",
   keywords: ["강의", "커리큘럼", "로드맵", "AI"],
 };
