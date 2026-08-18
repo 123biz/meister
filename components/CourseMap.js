@@ -32,7 +32,7 @@ export default function CourseMap({ currentSession = 2 }) {
   return (
     <div className="w-full max-w-[1750px] mx-auto mb-10">
       <div className="brutal-card bg-brutal-white p-8">
-        <h2 className="font-black text-2xl mb-6">🗺️ 강의 전체 여정</h2>
+        <h2 className="font-black text-2xl mb-6">🗺️ 전체 강의 로드맵</h2>
 
         <div className="flex gap-6 items-stretch">
           {courseMap.map((session) => {
