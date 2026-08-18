@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Image from "next/image";
 import { courseMap } from "@/lib/courseMap";
 
 const SESSION_BG = {
@@ -122,9 +123,20 @@ export default function CourseMap({ currentSession = 2 }) {
             <div className="font-black text-3xl mb-3">{expandedTopic.label}</div>
             <p className="text-xl font-semibold mb-6 opacity-90">{expandedTopic.desc}</p>
 
+            {expandedTopic.image && (
+              <Image
+                src={expandedTopic.image}
+                alt={expandedTopic.label}
+                width={2752}
+                height={1536}
+                sizes="100vw"
+                className="w-full h-auto mb-6 border-4 border-brutal-black"
+              />
+            )}
+
             <div className="flex flex-wrap gap-5">
               {expandedTopic.children.map((child) => (
-                <div key={child.label} className="w-80 border-2 border-brutal-black bg-brutal-white p-5">
+                <div key={child.label} className="w-76 border-2 border-brutal-black bg-brutal-white p-5">
                   <div className="font-black text-2xl mb-3">{child.label}</div>
                   <div className="text-lg font-semibold opacity-80 whitespace-pre-line">{child.desc}</div>
                   {child.note && <div className="mt-2 text-lg font-black text-blue-700">{child.note}</div>}
