@@ -16,8 +16,8 @@ export const metadata = {
 // 전역 레이아웃: 모든 페이지에 공통 적용
 export default function RootLayout({ children }) {
   return (
-    <html lang="ko" className={`h-full ${outfit.variable}`}>
-      <body className="min-h-full flex flex-col" suppressHydrationWarning>
+    <html lang="ko" className={outfit.variable}>
+      <body suppressHydrationWarning>
         {children}
       </body>
     </html>

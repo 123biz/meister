@@ -30,11 +30,14 @@
 }
 
 /* ── 기본 바디 스타일 ── */
+html {
+  overflow-x: hidden;
+}
+
 body {
   background: var(--color-brutal-cream);
   color: var(--color-brutal-black);
   font-family: var(--font-outfit);
-  overflow-x: hidden;
 }
 
 /* ── 네오 브루탈리즘 유틸리티 클래스 ── */
