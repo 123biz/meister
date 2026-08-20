@@ -6,7 +6,8 @@ import { supabase } from "@/lib/supabase";
 
 export default function LoginPage() {
   const router = useRouter();
-  const [email, setEmail] = useState("ceo@aicamp.club");
+  const ADMIN_EMAILS = ["ceo@aicamp.club", "cto@aicamp.club"];
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -36,18 +37,22 @@ export default function LoginPage() {
       <main className="w-full max-w-md">
         <form onSubmit={handleSubmit} className="brutal-card bg-brutal-white p-10 flex flex-col gap-5">
           <h1 className="text-3xl font-black mb-2 text-left">🔒 관리자 로그인</h1>
-          <input
-            type="email"
+          <select
             required
-            placeholder="이메일"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="brutal-input px-4 py-3 text-lg"
-          />
+            className="brutal-input brutal-select px-4 py-3 text-lg"
+          >
+            <option value="">접속할 이메일을 선택하세요.</option>
+            {ADMIN_EMAILS.map((adminEmail) => (
+              <option key={adminEmail} value={adminEmail}>
+                {adminEmail}
+              </option>
+            ))}
+          </select>
           <input
             type="password"
             required
-            autoFocus
             placeholder="비밀번호"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
