@@ -10,6 +10,13 @@ const SESSION_BG = {
   upcoming: "bg-brutal-gray",
 };
 
+// 비교 패널(columns)에서 카드마다 다른 배경톤
+const COLUMN_BG = {
+  white: "bg-brutal-white",
+  blue: "bg-brutal-blue/30",
+  orange: "bg-brutal-orange/25",
+};
+
 /**
  * CourseMap — 강의 전체 3세션 로드맵. 세션 카드는 진행 상태(완료/진행중/예정)로 색이 바뀌고,
  * Session 1의 주제를 클릭하면 하위 개념 설명이 바로 아래 패널로 펼쳐진다.
@@ -57,7 +64,7 @@ export default function CourseMap({ currentSession = 2 }) {
 
                 <div className="flex flex-wrap gap-3">
                   {session.topics.map((topic) => {
-                    const isExpandable = Boolean(topic.children) && isCurrent;
+                    const isExpandable = Boolean(topic.children || topic.columns) && isCurrent;
                     const isActive = expandedTopicId === topic.id;
 
                     if (!isExpandable) {
@@ -134,15 +141,61 @@ export default function CourseMap({ currentSession = 2 }) {
               />
             )}
 
-            <div className="flex flex-wrap gap-5">
-              {expandedTopic.children.map((child) => (
-                <div key={child.label} className="w-76 border-2 border-brutal-black bg-brutal-white p-5">
-                  <div className="font-black text-2xl mb-3">{child.label}</div>
-                  <div className="text-lg font-semibold opacity-80 whitespace-pre-line">{child.desc}</div>
-                  {child.note && <div className="mt-2 text-lg font-black text-blue-700">{child.note}</div>}
-                </div>
-              ))}
-            </div>
+            {expandedTopic.children && (
+              <div className="flex flex-wrap gap-5">
+                {expandedTopic.children.map((child) => (
+                  <div key={child.label} className="w-76 border-2 border-brutal-black bg-brutal-white p-5">
+                    <div className="font-black text-2xl mb-3">{child.label}</div>
+                    <div className="text-lg font-semibold opacity-80 whitespace-pre-line">{child.desc}</div>
+                    {child.note && <div className="mt-2 text-lg font-black text-blue-700">{child.note}</div>}
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {/* columns가 있는 주제는 제품 비교 카드(3단)로 펼친다 */}
+            {expandedTopic.columns && (
+              <div className="grid grid-cols-3 gap-8">
+                {expandedTopic.columns.map((column) => (
+                  <div
+                    key={column.title}
+                    className={`border-4 border-brutal-black brutal-shadow-sm p-6 flex flex-col ${COLUMN_BG[column.tone]}`}
+                  >
+                    <div className="flex items-start justify-between gap-3 mb-4">
+                      <div className="font-black text-2xl">{column.title}</div>
+                      <span className="border-2 border-brutal-black bg-brutal-white px-2 py-1 text-sm font-black whitespace-nowrap">
+                        {column.badge}
+                      </span>
+                    </div>
+
+                    <div className="font-black text-lg mb-5">교육용 평판 키워드: {column.keywords}</div>
+
+                    <dl className="flex flex-col gap-3">
+                      {column.rows.map((row) => (
+                        <div key={row.label} className="flex gap-3">
+                          <dt className="w-20 shrink-0 font-black text-base">{row.label}</dt>
+                          <dd className="flex-1 text-base font-semibold opacity-80">{row.text}</dd>
+                        </div>
+                      ))}
+                    </dl>
+
+                    <div className="flex flex-wrap gap-4 mt-auto pt-6">
+                      {column.links.map((link) => (
+                        <a
+                          key={link.label}
+                          href={link.href}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="brutal-btn !normal-case bg-brutal-white px-4 py-2 text-base"
+                        >
+                          {link.label}
+                        </a>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         </div>
       )}
