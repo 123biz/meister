@@ -168,30 +168,16 @@ export default function CourseMap({ currentSession = 2 }) {
                       </span>
                     </div>
 
-                    <div className="font-black text-lg mb-5">교육용 평판 키워드: {column.keywords}</div>
+                    <div className="font-black text-lg mb-5">{column.keywords}</div>
 
                     <dl className="flex flex-col gap-3">
                       {column.rows.map((row) => (
                         <div key={row.label} className="flex gap-3">
-                          <dt className="w-20 shrink-0 font-black text-base">{row.label}</dt>
-                          <dd className="flex-1 text-base font-semibold opacity-80">{row.text}</dd>
+                          <dt className="w-20 shrink-0 font-black text-lg">{row.label}</dt>
+                          <dd className="flex-1 text-lg font-semibold opacity-80">{row.text}</dd>
                         </div>
                       ))}
                     </dl>
-
-                    <div className="flex flex-wrap gap-4 mt-auto pt-6">
-                      {column.links.map((link) => (
-                        <a
-                          key={link.label}
-                          href={link.href}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="brutal-btn !normal-case bg-brutal-white px-4 py-2 text-base"
-                        >
-                          {link.label}
-                        </a>
-                      ))}
-                    </div>
                   </div>
                 ))}
               </div>
