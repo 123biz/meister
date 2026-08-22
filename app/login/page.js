@@ -6,7 +6,7 @@ import { supabase } from "@/lib/supabase";
 
 export default function LoginPage() {
   const router = useRouter();
-  const ADMIN_EMAILS = ["ceo@aicamp.club", "cto@aicamp.club"];
+  const ADMIN_EMAILS = ["ceo@aicamp.club", "cto@aicamp.club", "kshue72@naver.com", "gnioppa@gmail.com"];
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState(null);
