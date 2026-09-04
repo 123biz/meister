@@ -6,7 +6,7 @@ import { supabase } from "@/lib/supabase";
 
 export default function LoginPage() {
   const router = useRouter();
-  const ADMIN_EMAILS = ["ceo@aicamp.club", "cto@aicamp.club", "kshue72@naver.com", "gnioppa@gmail.com"];
+  const ADMIN_EMAILS = ["ceo@aicamp.club", "cto@aicamp.club", "kshue72@naver.com", "gnioppa@gmail.com", "cemr@nonghyup.ac.kr"];
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState(null);
@@ -31,7 +31,7 @@ export default function LoginPage() {
     <div className="min-h-screen bg-brutal-cream flex flex-col items-center justify-center px-6">
       <div className="flex flex-col items-center gap-10 mb-12 text-center whitespace-nowrap">
         <span className="text-5xl md:text-6xl font-black tracking-tighter">🚀 Claude Code</span>
-        <span className="text-3xl md:text-5xl font-black tracking-wide text-brutal-pink">AI제조혁신 코디네이터/마이스터 제2기</span>
+        <span className="text-3xl md:text-5xl font-black tracking-wide text-brutal-pink">AI제조혁신 코디네이터/마이스터 커리큘럼</span>
       </div>
 
       <main className="w-full max-w-md">
