@@ -28,6 +28,85 @@ const PROPOSAL_STEPS = [
   { step: "4. 이관", work: "담당자가 맥락을 직접 갱신할 수 있는 수준까지 교육", output: "운영 매뉴얼, 사내 담당자 교육" },
 ];
 
+const DEFAULT_DIAGRAM_LABELS = {
+  center: "LLM",
+  context: { title: "맥락", desc: "무엇을 알려줄 것인가" },
+  tools: { title: "도구", desc: "무엇을 할 수 있게 할 것인가" },
+  control: { title: "절차", desc: "언제 무엇을 하게 할 것인가" },
+  verify: { title: "검증", desc: "맞는지 어떻게 확인할 것인가" },
+};
+
+// labels로 일부 글자만 덮어쓸 수 있다 (예: { context: { title: "맥락", desc: "..." } })
+function HarnessDiagram({ labels = {} }) {
+  const L = { ...DEFAULT_DIAGRAM_LABELS, ...labels };
+  // 맥락 박스: desc를 배열로 주면 여러 줄, width로 가로폭 조절 (줄이 늘면 박스는 아래로 늘어난다)
+  const ctxLines = Array.isArray(L.context.desc) ? L.context.desc : [L.context.desc];
+  const ctxW = L.context.width ?? 240;
+  const ctxExtra = (ctxLines.length - 1) * 22;
+  // 맥락 박스 위 바깥에 붙는 보조 설명 (줄 배열, 가운데 정렬). 있으면 그림이 위로 길어진다.
+  const note = L.context.note ?? [];
+  const hasNote = note.length > 0;
+  // 도구 박스 아래 바깥에 붙는 보조 설명 (줄 배열, 가운데 정렬)
+  const toolNote = L.tools.note ?? [];
+  // 절차 박스 아래 바깥에 붙는 보조 설명 (줄 배열, 가운데 정렬). 있으면 그림이 아래로 길어진다.
+  const controlNote = L.control.note ?? [];
+  // 검증 박스 아래 바깥에 붙는 보조 설명 (줄 배열, 박스 가운데 정렬. 그림 왼쪽 가장자리에 가까워 줄을 짧게 나눈다)
+  const verifyNote = L.verify.note ?? [];
+  // 위아래 그림의 확대 배율(글자·박스 크기)을 맞추기 위해 viewBox 폭에 비례해 최대 너비를 정한다
+  const topExtra = hasNote ? 50 : 0;
+  const vbW = 800;
+  const vbH = 480 + topExtra + (controlNote.length > 0 ? 60 : 0);
+  return (
+    <svg
+      viewBox={`20 ${60 - topExtra} ${vbW} ${vbH}`}
+      xmlns="http://www.w3.org/2000/svg"
+      role="img"
+      aria-label="가운데 LLM, 둘레에 맥락·도구·절차·검증 네 요소가 배치된 하네스 구조도"
+      className="w-full h-auto"
+      style={{ maxWidth: vbW * 1.3 }}
+    >
+
+      <line x1="420" y1="220" x2={420} y2={162 + ctxExtra} stroke="#1A1A2E" strokeWidth="3" />
+      <line x1="500" y1="300" x2="578" y2="300" stroke="#1A1A2E" strokeWidth="3" />
+      <line x1="420" y1="380" x2="420" y2="438" stroke="#1A1A2E" strokeWidth="3" />
+      <line x1="340" y1="300" x2="262" y2="300" stroke="#1A1A2E" strokeWidth="3" />
+
+      <circle cx="420" cy="300" r="80" fill="#FFE156" stroke="#1A1A2E" strokeWidth="4" />
+      <text x="420" y="311" textAnchor="middle" fontSize="32" fontWeight="800" fill="#1A1A2E">{L.center}</text>
+
+      <rect x={420 - ctxW / 2} y="76" width={ctxW} height={86 + ctxExtra} fill="#6EC6FF" stroke="#1A1A2E" strokeWidth="3" />
+      <text x="420" y="114" textAnchor="middle" fontSize="26" fontWeight="800" fill="#1A1A2E">{L.context.title}</text>
+      {ctxLines.map((line, i) => (
+        <text key={i} x="420" y={138 + i * 22} textAnchor="middle" fontSize="16" fill="#1A1A2E">{line}</text>
+      ))}
+      {note.map((line, i) => (
+        <text key={i} x="420" y={27 + i * 24} textAnchor="middle" fontSize="16" fontWeight="600" fill="#1D6FD1">{line}</text>
+      ))}
+      {toolNote.map((line, i) => (
+        <text key={i} x="689" y={376 + i * 24} textAnchor="middle" fontSize="16" fontWeight="600" fill="#1D6FD1">{line}</text>
+      ))}
+      {controlNote.map((line, i) => (
+        <text key={i} x="420" y={557 + i * 24} textAnchor="middle" fontSize="16" fontWeight="600" fill="#1D6FD1">{line}</text>
+      ))}
+      {verifyNote.map((line, i) => (
+        <text key={i} x="151" y={376 + i * 24} textAnchor="middle" fontSize="16" fontWeight="600" fill="#1D6FD1">{line}</text>
+      ))}
+
+      <rect x="578" y="257" width="222" height="86" fill="#7BED9F" stroke="#1A1A2E" strokeWidth="3" />
+      <text x="689" y="295" textAnchor="middle" fontSize="26" fontWeight="800" fill="#1A1A2E">{L.tools.title}</text>
+      <text x="689" y="319" textAnchor="middle" fontSize="16" fill="#1A1A2E">{L.tools.desc}</text>
+
+      <rect x="300" y="438" width="240" height="86" fill="#FFA94D" stroke="#1A1A2E" strokeWidth="3" />
+      <text x="420" y="476" textAnchor="middle" fontSize="26" fontWeight="800" fill="#1A1A2E">{L.control.title}</text>
+      <text x="420" y="500" textAnchor="middle" fontSize="16" fill="#1A1A2E">{L.control.desc}</text>
+
+      <rect x="40" y="257" width="222" height="86" fill="#FF6B9D" stroke="#1A1A2E" strokeWidth="3" />
+      <text x="151" y="295" textAnchor="middle" fontSize="26" fontWeight="800" fill="#1A1A2E">{L.verify.title}</text>
+      <text x="151" y="319" textAnchor="middle" fontSize="16" fill="#1A1A2E">{L.verify.desc}</text>
+    </svg>
+  );
+}
+
 /**
  * HarnessIntro — 로그인 직후, 강의 로드맵 이전에 보여주는 "AI 하네스 입문" 과정 목표 화면.
  * 데스크톱 전용 레이아웃(모바일 대응 없음).
@@ -37,38 +116,7 @@ export default function HarnessIntro({ onNext }) {
     <div className="w-full max-w-[1200px] mx-auto mb-10">
       <div className="flex flex-col gap-8">
         <figure className="flex flex-col items-center gap-4">
-          <svg
-            viewBox="20 60 800 480"
-            xmlns="http://www.w3.org/2000/svg"
-            role="img"
-            aria-label="가운데 LLM, 둘레에 맥락·도구·절차·검증 네 요소가 배치된 하네스 구조도"
-            className="w-full max-w-[1100px] h-auto"
-          >
-
-            <line x1="420" y1="220" x2="420" y2="162" stroke="#1A1A2E" strokeWidth="3" />
-            <line x1="500" y1="300" x2="578" y2="300" stroke="#1A1A2E" strokeWidth="3" />
-            <line x1="420" y1="380" x2="420" y2="438" stroke="#1A1A2E" strokeWidth="3" />
-            <line x1="340" y1="300" x2="262" y2="300" stroke="#1A1A2E" strokeWidth="3" />
-
-            <circle cx="420" cy="300" r="80" fill="#FFE156" stroke="#1A1A2E" strokeWidth="4" />
-            <text x="420" y="311" textAnchor="middle" fontSize="32" fontWeight="800" fill="#1A1A2E">LLM</text>
-
-            <rect x="300" y="76" width="240" height="86" fill="#6EC6FF" stroke="#1A1A2E" strokeWidth="3" />
-            <text x="420" y="114" textAnchor="middle" fontSize="26" fontWeight="800" fill="#1A1A2E">맥락</text>
-            <text x="420" y="138" textAnchor="middle" fontSize="16" fill="#1A1A2E">무엇을 알려줄 것인가</text>
-
-            <rect x="578" y="257" width="222" height="86" fill="#7BED9F" stroke="#1A1A2E" strokeWidth="3" />
-            <text x="689" y="295" textAnchor="middle" fontSize="26" fontWeight="800" fill="#1A1A2E">도구</text>
-            <text x="689" y="319" textAnchor="middle" fontSize="16" fill="#1A1A2E">무엇을 할 수 있게 할 것인가</text>
-
-            <rect x="300" y="438" width="240" height="86" fill="#FFA94D" stroke="#1A1A2E" strokeWidth="3" />
-            <text x="420" y="476" textAnchor="middle" fontSize="26" fontWeight="800" fill="#1A1A2E">절차</text>
-            <text x="420" y="500" textAnchor="middle" fontSize="16" fill="#1A1A2E">언제 무엇을 하게 할 것인가</text>
-
-            <rect x="40" y="257" width="222" height="86" fill="#FF6B9D" stroke="#1A1A2E" strokeWidth="3" />
-            <text x="151" y="295" textAnchor="middle" fontSize="26" fontWeight="800" fill="#1A1A2E">검증</text>
-            <text x="151" y="319" textAnchor="middle" fontSize="16" fill="#1A1A2E">맞는지 어떻게 확인할 것인가</text>
-          </svg>
+          <HarnessDiagram />
           <h2 className="font-black text-4xl text-center text-[#1D6FD1]">과정 목표: AI Harness Engineering</h2>
         </figure>
 
@@ -101,7 +149,7 @@ export default function HarnessIntro({ onNext }) {
         </section>
 
         <div className="mt-12">
-          <p className="font-black text-3xl mb-5">비유 두 가지</p>
+          <p className="font-black text-3xl mb-5 text-[#1D6FD1]">비유 두 가지</p>
           <div className="flex flex-col gap-5">
             <div>
               <p className="text-2xl leading-relaxed">
@@ -147,7 +195,29 @@ export default function HarnessIntro({ onNext }) {
         </table>
 
         <div className="mt-12">
-          <p className="font-black text-3xl mb-5">하네스 없는 AI 도입이 실패하는 패턴</p>
+          <div className="flex justify-center mb-12">
+            <HarnessDiagram
+              labels={{
+                context: {
+                  ...DEFAULT_DIAGRAM_LABELS.context,
+                  note: ["“대표님, 우리 회사 단가표, 거래처 성향, 사내 용어.", "이걸 모르면 남의 회사 답변이 나옵니다.”"],
+                },
+                verify: {
+                  ...DEFAULT_DIAGRAM_LABELS.verify,
+                  note: ["“AI가 틀릴 수 있다는 걸", "전제로, 틀린 걸 잡아내는", "장치입니다. 여기가 빠지면", "결국 아무도 안 씁니다.”"],
+                },
+                control: {
+                  ...DEFAULT_DIAGRAM_LABELS.control,
+                  note: ["“3백만원 넘는 건은 사람이 승인하고 넘어간다.", "이런 규칙이 들어가는 자리입니다.”"],
+                },
+                tools: {
+                  ...DEFAULT_DIAGRAM_LABELS.tools,
+                  note: ["“말만 하는 AI와 ERP를 직접 조회하는", "AI는 다른 물건입니다.”"],
+                },
+              }}
+            />
+          </div>
+          <p className="font-black text-3xl mb-5 text-[#D62F2F]">하네스 없는 AI 도입이 실패하는 패턴</p>
           <div className="grid grid-cols-2 gap-5">
             {FAILURE_PATTERNS.map((f) => (
               <div key={f.title} className={`border-4 border-brutal-black p-6 ${f.bg}`}>
