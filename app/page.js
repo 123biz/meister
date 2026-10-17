@@ -4,11 +4,15 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 import CourseMap from "@/components/CourseMap";
+import HarnessIntro from "@/components/HarnessIntro";
 
 export default function Home() {
   const router = useRouter();
   const [isAdmin, setIsAdmin] = useState(false);
   const [authChecked, setAuthChecked] = useState(false);
+
+  // 로그인 직후 로드맵 이전에 보여주는 "AI 하네스 입문" 과정 목표 화면
+  const [introDone, setIntroDone] = useState(false);
 
   // 강의 전체 맵에서 강조할 "오늘 진행 세션" (관리자 로그인 시 헤더에서 직접 지정, course_settings 테이블에 저장)
   const [currentSession, setCurrentSession] = useState(1);
@@ -93,20 +97,22 @@ export default function Home() {
           {/* 우측: "오늘 세션" 선택 + 로그아웃 (이 화면에 왔다는 건 이미 로그인된 상태) */}
           <div className="flex-1 flex justify-end">
             <div className="flex items-stretch gap-6">
-              <div className="brutal-card bg-brutal-white px-3 py-2 flex items-center gap-2">
-                <span className="font-bold text-xs whitespace-nowrap">🗺️ 오늘 세션</span>
-                {[1, 2, 3].map((sessionId) => (
-                  <button
-                    key={sessionId}
-                    onClick={() => updateCurrentSession(sessionId)}
-                    className={`brutal-btn w-9 h-9 text-sm ${
-                      currentSession === sessionId ? "bg-brutal-yellow" : "bg-brutal-white"
-                    }`}
-                  >
-                    {sessionId}
-                  </button>
-                ))}
-              </div>
+              {introDone && (
+                <div className="brutal-card bg-brutal-white px-3 py-2 flex items-center gap-2">
+                  <span className="font-bold text-xs whitespace-nowrap">🗺️ 오늘 세션</span>
+                  {[1, 2, 3].map((sessionId) => (
+                    <button
+                      key={sessionId}
+                      onClick={() => updateCurrentSession(sessionId)}
+                      className={`brutal-btn w-9 h-9 text-sm ${
+                        currentSession === sessionId ? "bg-brutal-yellow" : "bg-brutal-white"
+                      }`}
+                    >
+                      {sessionId}
+                    </button>
+                  ))}
+                </div>
+              )}
               <button onClick={handleLogout} className="brutal-btn bg-brutal-white px-3 flex items-center justify-center text-lg whitespace-nowrap">
                 로그아웃
               </button>
@@ -115,7 +121,11 @@ export default function Home() {
         </header>
       </div>
 
-      <CourseMap currentSession={currentSession} />
+      {introDone ? (
+        <CourseMap currentSession={currentSession} />
+      ) : (
+        <HarnessIntro onNext={() => setIntroDone(true)} />
+      )}
     </div>
   );
 }
