@@ -255,7 +255,7 @@ export default function HarnessIntro({ onNext }) {
           </table>
           <div className="mt-8 border-4 border-brutal-black bg-brutal-blue/40 p-6 brutal-shadow-sm">
             <p className="text-2xl leading-relaxed">
-              <strong className="text-[1.7rem]">단가가 갈리는 지점.</strong>{" "}
+              <strong className="text-[1.7rem]">컨설팅 단가의 상승.</strong>{" "}
               &ldquo;AI로 만들어드립니다&rdquo;는 외주 개발자 포지션이고, 단가가 결과물의 크기에 묶인다.
               반면 &ldquo;<u>귀사 업무에 맞는 하네스를 설계해 드립니다</u>&rdquo;는 컨설턴트 포지션이다.
             </p>
