@@ -7,6 +7,15 @@ const HARNESS_ELEMENTS = [
   { name: "검증", en: "Verification", question: "맞는지 어떻게 확인할 것인가", bg: "bg-brutal-pink/40" },
 ];
 
+const WEAKNESS_TABLE = [
+  { weakness: "탐색의 한계", prescription: "추가 탐색 지시", work: "최신 자료를 따로 찾게 시킨다" },
+  { weakness: "선호도 훈련의 오류", sub: "아첨, 동조", prescription: "중립화와 재훈련", work: "편향된 질문을 중립 문장으로 바꿔서 다시 묻게 한다" },
+  { weakness: "불충분한 문맥", prescription: "문맥 검증", work: "조건이 빠졌는지 먼저 따지게 한다" },
+  { weakness: "확률적 선택", sub: "계산을 대충 한다", prescription: "도구 사용 및 검증", work: "계산은 계산기로, 결과는 검산으로" },
+  { weakness: "구조적 약점", sub: "토큰 단위 인식", prescription: "절차 제시와 도구", work: "단계를 쪼개 주거나 프로그램을 쓰게 한다" },
+  { weakness: "기타", prescription: "범위 제한과 검증", work: "업무 밖 질문은 거절하게 하고, 결과를 한 번 더 검사한다" },
+];
+
 const HARNESS_TABLE = [
   { name: "맥락", en: "Context", question: "무엇을 알려줄 것인가", analogy: "업무 매뉴얼, 사규", example: "단가표, 거래처 특성, 사내 용어, 과거 견적 이력" },
   { name: "도구", en: "Tools", question: "무엇을 할 수 있게 할 것인가", analogy: "사내 시스템 계정", example: "ERP 조회, 엑셀 생성, 메일 발송, 재고 DB 접근" },
@@ -107,6 +116,66 @@ function HarnessDiagram({ labels = {} }) {
   );
 }
 
+// 과제별 AI 능력을 나타낸 꺾은선. 봉우리는 잘하는 과제, 골짜기는 못하는 과제다.
+const JAGGED_POINTS = [
+  { x: 110, y: 100, label: "변호사 시험", strong: true },
+  { x: 228, y: 258, label: "글자 수 세기", strong: false },
+  { x: 346, y: 104, label: "전략 분석", strong: true },
+  { x: 464, y: 262, label: "숫자 비교", strong: false },
+  { x: 582, y: 110, label: "논문 요약", strong: true },
+  { x: 700, y: 254, label: "거꾸로 읽기", strong: false },
+];
+
+function JaggedFrontierChart() {
+  return (
+    <svg
+      viewBox="0 0 800 420"
+      xmlns="http://www.w3.org/2000/svg"
+      role="img"
+      aria-label="과제별 AI 능력을 나타낸 꺾은선. 사람의 기대는 평탄한 선이지만 실제는 톱니처럼 오르내린다"
+      className="w-full h-auto"
+      style={{ maxWidth: 1040 }}
+    >
+      <text x="24" y="40" fontSize="20" fontWeight="800" fill="#1A1A2E">AI 능력</text>
+      <line x1="90" y1="70" x2="90" y2="300" stroke="#1A1A2E" strokeWidth="3" />
+      <line x1="90" y1="300" x2="740" y2="300" stroke="#1A1A2E" strokeWidth="3" />
+
+      <line x1="110" y1="108" x2="740" y2="108" stroke="#1A1A2E" strokeWidth="3" strokeDasharray="10 8" />
+      <text x="740" y="94" textAnchor="end" fontSize="19" fontWeight="700" fill="#1A1A2E">사람의 기대</text>
+
+      <polyline
+        points={JAGGED_POINTS.map((p) => `${p.x},${p.y}`).join(" ")}
+        fill="none"
+        stroke="#1D6FD1"
+        strokeWidth="5"
+        strokeLinejoin="round"
+        strokeLinecap="round"
+      />
+
+      {JAGGED_POINTS.map((p) => (
+        <circle key={p.label} cx={p.x} cy={p.y} r="9" fill={p.strong ? "#6EC6FF" : "#FF6B9D"} stroke="#1A1A2E" strokeWidth="3" />
+      ))}
+      {JAGGED_POINTS.map((p) => (
+        <text
+          key={p.label}
+          x={p.x}
+          y="332"
+          textAnchor="middle"
+          fontSize="18"
+          fontWeight={p.strong ? "600" : "800"}
+          fill={p.strong ? "#1A1A2E" : "#D62F2F"}
+        >
+          {p.label}
+        </text>
+      ))}
+
+      <text x="400" y="400" textAnchor="middle" fontSize="20" fontWeight="700" fill="#1A1A2E">
+        “어려운 과제를 해냈다고 해서 쉬운 과제를 한다는 보장이 없다”
+      </text>
+    </svg>
+  );
+}
+
 /**
  * HarnessIntro — 로그인 직후, 강의 로드맵 이전에 보여주는 "AI 하네스 입문" 과정 목표 화면.
  * 데스크톱 전용 레이아웃(모바일 대응 없음).
@@ -133,6 +202,94 @@ export default function HarnessIntro({ onNext }) {
             </li>
           </ul>
         </div>
+        </section>
+
+        <div className="mt-12">
+          <p className="font-black text-3xl mb-5 text-[#1D6FD1]">왜 필요한가: 들쑥날쑥 AI (Jagged Frontier)</p>
+          <div className="flex flex-col gap-5">
+            <p className="text-2xl leading-relaxed">
+              <strong className="text-[1.7rem]">AI의 능력 경계는 평평하지 않고 톱니처럼 들쑥날쑥하다.</strong>{" "}
+              미국 펜실베이니아대 와튼스쿨(The Wharton School) 에단 몰릭(Ethan Mollick) 교수가
+              컨설턴트를 대상으로 한 현장 실험에서 나온 말이다.
+            </p>
+            <p className="text-2xl leading-relaxed">
+              어려운 걸 해내니 쉬운 것도 당연히 할 거라는 직관이 깨진다.
+              하네스가 왜 필요한지는 이 개념 하나로 설명된다.{" "}
+              <strong>AI가 머리는 이미 충분히 좋다. 체계가 없을 뿐이다.</strong>
+            </p>
+          </div>
+          <figure className="mt-8 flex flex-col items-center gap-4">
+            <JaggedFrontierChart />
+            <figcaption className="text-xl opacity-60 text-center">
+              톱니 모양이 핵심. 평평한 점선(기대)과의 차이가 사고가 나는 자리다
+            </figcaption>
+          </figure>
+          <div className="mt-8 w-fit mx-auto border-4 border-brutal-black bg-brutal-blue/40 px-8 py-6 brutal-shadow-sm">
+            <p className="text-2xl leading-relaxed">AI는 변호사 시험에 붙으면서 단어의 글자 수는 못 센다.</p>
+            <p className="text-2xl leading-relaxed">이 들쑥날쑥함을 관리하는 장치가 하네스다.</p>
+          </div>
+        </div>
+
+        <div className="mt-12">
+          <p className="font-black text-3xl mb-5 text-[#1D6FD1]">비유 두 가지</p>
+          <div className="flex flex-col gap-5">
+            <div>
+              <p className="text-2xl leading-relaxed">
+                <strong className="text-[1.7rem]">마구(馬具).</strong>{" "}
+                harness의 원뜻이다. 말은 그 자체로 힘이 세지만, 마구가 없으면 그 힘이 사람이 원하는 일로 바뀌지 않는다.
+                고삐와 멍에와 수레를 연결해야 비로소 짐을 나른다. LLM이 말이고, 하네스가 마구다.
+              </p>
+            </div>
+            <div>
+              <p className="text-2xl leading-relaxed">
+                <strong className="text-[1.7rem]">아주 똑똑한 신입사원.</strong>{" "}
+                명문대를 나온 신입이 와도 가만히 두면 회사의 사정을 몰라 헛일을 한다.
+                업무 매뉴얼, 체크리스트, 결재선, 시스템 계정, 보고 양식. 이걸 갖춰줘야 전력이 된다.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div className="mt-12">
+          <p className="font-black text-3xl mb-5 text-[#1D6FD1]">약점별 처방 &mdash; 6가지</p>
+          <p className="text-2xl leading-relaxed mb-5">
+            하네스는 AI의 약점을 하나씩 막는 장치다. 각 약점에 맞는 처방이 따로 있다.
+          </p>
+          <table className="w-full border-4 border-brutal-black bg-brutal-cream text-2xl text-left">
+            <thead className="bg-brutal-cream">
+              <tr>
+                <th className="p-4 border-b-4 border-brutal-black">약점</th>
+                <th className="p-4 border-b-4 border-brutal-black">처방</th>
+                <th className="p-4 border-b-4 border-brutal-black">실제로 하는 일</th>
+              </tr>
+            </thead>
+            <tbody>
+              {WEAKNESS_TABLE.map((row) => (
+                <tr key={row.weakness} className="border-t-2 border-brutal-black first:border-t-0 align-top">
+                  <td className="p-4">
+                    <span className="font-black">{row.weakness}</span>
+                    {row.sub && (
+                      <>
+                        <br />
+                        <span className="text-lg opacity-60">{row.sub}</span>
+                      </>
+                    )}
+                  </td>
+                  <td className="p-4 whitespace-nowrap">{row.prescription}</td>
+                  <td className="p-4">{row.work}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        <div className="mt-12">
+          <p className="font-black text-3xl mb-5 text-[#1D6FD1]">설계할 때는 4개로 묶는다</p>
+          <p className="text-2xl leading-relaxed">
+            위 6가지는 <strong>진단용</strong>이다. &ldquo;이 업무에서 AI가 어떻게 틀리는가&rdquo;를 찾을 때 쓴다.
+            반면 실제로 하네스를 <strong>설계</strong>할 때는 네 덩어리로 묶는 편이 손에 잡힌다.
+          </p>
+        </div>
 
         <div>
           <p className="font-black text-3xl mb-5">하네스 4대 구성 요소</p>
@@ -146,31 +303,9 @@ export default function HarnessIntro({ onNext }) {
             ))}
           </div>
         </div>
-        </section>
-
-        <div className="mt-12">
-          <p className="font-black text-3xl mb-5 text-[#1D6FD1]">비유 두 가지</p>
-          <div className="flex flex-col gap-5">
-            <div>
-              <p className="text-2xl leading-relaxed">
-                <strong className="text-[1.7rem]">마구(馬具).</strong>{" "}
-                harness의 원뜻이다. 말은 그 자체로 힘이 세지만, 마구가 없으면 그 힘이 일로 바뀌지 않는다.
-                고삐와 멍에와 수레를 연결해야 비로소 짐을 나른다. LLM이 말이고, 하네스가 마구다.
-              </p>
-            </div>
-            <div>
-              <p className="text-2xl leading-relaxed">
-                <strong className="text-[1.7rem]">아주 똑똑한 신입사원.</strong>{" "}
-                명문대를 나온 신입이 와도 가만히 두면 회사의 사정을 몰라 헛일을 한다.
-                업무 매뉴얼, 체크리스트, 결재선, 시스템 계정, 보고 양식. 이걸 갖춰줘야 전력이 된다.
-                AI가 머리는 이미 충분히 좋다. 체계가 없을 뿐이다.
-              </p>
-            </div>
-          </div>
-        </div>
 
         <table className="w-full border-4 border-brutal-black bg-brutal-cream text-2xl text-left">
-          <thead className="bg-brutal-cream text-xl">
+          <thead className="bg-brutal-cream">
             <tr>
               <th className="p-4 border-b-4 border-brutal-black">요소</th>
               <th className="p-4 border-b-4 border-brutal-black">묻는 질문</th>
@@ -236,7 +371,7 @@ export default function HarnessIntro({ onNext }) {
         <div className="mt-12">
           <p className="font-black text-3xl mb-5 text-[#1D6FD1]">컨설팅 제안(&ldquo;귀사 업무에 맞는 하네스를 설계해 드립니다&rdquo;)</p>
           <table className="w-full border-4 border-brutal-black bg-brutal-cream text-2xl text-left">
-            <thead className="bg-brutal-cream text-xl">
+            <thead className="bg-brutal-cream">
               <tr>
                 <th className="p-4 border-b-4 border-brutal-black">단계</th>
                 <th className="p-4 border-b-4 border-brutal-black">하는 일</th>
