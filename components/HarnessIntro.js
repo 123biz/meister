@@ -1,11 +1,54 @@
 "use client";
 
+import { useEffect, useState } from "react";
+
 const HARNESS_ELEMENTS = [
   { name: "맥락", en: "Context", question: "무엇을 알려줄 것인가", bg: "bg-brutal-blue/40" },
   { name: "도구", en: "Tools", question: "무엇을 할 수 있게 할 것인가", bg: "bg-brutal-green/50" },
   { name: "절차", en: "Control", question: "언제 무엇을 하게 할 것인가", bg: "bg-brutal-orange/40" },
   { name: "검증", en: "Verification", question: "맞는지 어떻게 확인할 것인가", bg: "bg-brutal-pink/40" },
 ];
+
+// 들쑥날쑥 AI의 출처가 된 현장 실험. "출처" 버튼을 누르면 모달로 보여준다.
+const SOURCE_PAPER = {
+  lead: "2023년입니다. 생성형 AI가 공개된 지 1년도 안 된 시점에 수행된 실험입니다.",
+  rows: [
+    {
+      label: "발표",
+      value: "2023년 9월, ",
+      linkText: "하버드 경영대학원(HBS) 워킹페이퍼",
+      href: "https://www.hbs.edu/faculty/Pages/item.aspx?num=64700",
+    },
+    { label: "정식 출판", value: "2026년 3월, 『Organization Science』" },
+    { label: "대상", value: "BCG(보스턴컨설팅그룹) 컨설턴트 758명" },
+    {
+      label: "논문 제목",
+      value:
+        "Navigating the Jagged Technological Frontier: Field Experimental Evidence of the Effects of Artificial Intelligence on Knowledge Worker Productivity and Quality",
+      ko: "들쑥날쑥한 기술 경계를 헤쳐 나가기: 인공지능이 지식 노동자의 생산성과 품질에 미치는 영향에 대한 현장 실험 증거",
+    },
+    {
+      label: "공저자",
+      value: "델아쿠아, 맥파울랜드, 몰릭, 리프시츠-아사프, 켈로그, 라젠드란, 크레이어, 캉들롱, 라카니",
+    },
+  ],
+  designLead: "실험 설계가 '들쑥날쑥'의 근거다. 과제를 두 종류로 나눴다.",
+  tasks: [
+    {
+      title: "창의적 과제",
+      paren: "신제품 아이디어, 시장 진입 전략",
+      desc: "AI를 쓴 쪽이 더 많이, 더 빨리, 더 높은 품질로 해냈다.",
+      bg: "bg-brutal-green/50",
+    },
+    {
+      title: "까다로운 경영 사례",
+      paren: "스프레드시트 수치와 인터뷰 노트의 단서를 맞춰봐야 풀리는 문제",
+      desc: "AI를 쓴 쪽이 오히려 정답률이 낮았다. AI가 그럴듯하지만 틀린 권고를 냈고, 사람들이 그걸 그대로 받아들였기 때문이다.",
+      bg: "bg-brutal-pink/40",
+    },
+  ],
+  closing: "사람 눈에는 비슷한 난이도로 보이는 두 과제가 경계선 반대편에 떨어진다. 이게 Jagged Frontier다.",
+};
 
 const WEAKNESS_TABLE = [
   { weakness: "탐색의 한계", prescription: "추가 탐색 지시", work: "최신 자료를 따로 찾게 시킨다" },
@@ -176,11 +219,91 @@ function JaggedFrontierChart() {
   );
 }
 
+// 출처 모달. 배경 클릭 또는 Esc로 닫는다.
+function SourceModal({ onClose }) {
+  useEffect(() => {
+    const onKey = (e) => {
+      if (e.key === "Escape") onClose();
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [onClose]);
+
+  return (
+    <div
+      className="fixed inset-0 z-50 flex justify-center overflow-y-auto bg-brutal-black/70 p-10"
+      onClick={onClose}
+    >
+      <div
+        role="dialog"
+        aria-modal="true"
+        aria-label="출처: 하버드 경영대학원 현장 실험"
+        className="my-auto w-full max-w-[1000px] border-4 border-brutal-black bg-brutal-cream p-10 brutal-shadow-lg"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="flex items-start justify-between gap-6 mb-8">
+          <p className="font-black text-3xl text-[#1D6FD1]">출처: 들쑥날쑥 AI 현장 실험</p>
+          <button
+            onClick={onClose}
+            aria-label="닫기"
+            className="brutal-btn bg-brutal-pink px-5 py-2 text-2xl shrink-0"
+          >
+            ✕
+          </button>
+        </div>
+
+        <p className="text-2xl leading-relaxed mb-8">{SOURCE_PAPER.lead}</p>
+
+        <table className="w-full border-4 border-brutal-black bg-brutal-white text-2xl text-left">
+          <tbody>
+            {SOURCE_PAPER.rows.map((row) => (
+              <tr key={row.label} className="border-t-2 border-brutal-black first:border-t-0 align-top">
+                <td className="p-4 font-black whitespace-nowrap">{row.label}</td>
+                <td className="p-4">
+                  {row.value}
+                  {row.href && (
+                    <a
+                      href={row.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="font-black underline decoration-2 underline-offset-4 hover:bg-brutal-yellow"
+                    >
+                      {row.linkText}
+                    </a>
+                  )}
+                  {row.ko && <p className="mt-2 text-xl opacity-60">{row.ko}</p>}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+
+        <p className="mt-10 text-2xl leading-relaxed mb-5">{SOURCE_PAPER.designLead}</p>
+        <div className="grid grid-cols-2 gap-5">
+          {SOURCE_PAPER.tasks.map((task) => (
+            <div key={task.title} className={`border-4 border-brutal-black p-6 ${task.bg}`}>
+              <p className="font-black text-3xl">{task.title}</p>
+              <p className="text-lg opacity-60 mb-3">{task.paren}</p>
+              <p className="text-xl leading-relaxed">{task.desc}</p>
+            </div>
+          ))}
+        </div>
+
+        <div className="mt-10 border-4 border-brutal-black bg-brutal-yellow p-6 brutal-shadow-sm">
+          <p className="text-2xl leading-relaxed font-black">{SOURCE_PAPER.closing}</p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 /**
  * HarnessIntro — 로그인 직후, 강의 로드맵 이전에 보여주는 "AI 하네스 입문" 과정 목표 화면.
  * 데스크톱 전용 레이아웃(모바일 대응 없음).
  */
 export default function HarnessIntro({ onNext }) {
+  const [sourceOpen, setSourceOpen] = useState(false);
+
   return (
     <div className="w-full max-w-[1200px] mx-auto mb-10">
       <div className="flex flex-col gap-8">
@@ -210,7 +333,13 @@ export default function HarnessIntro({ onNext }) {
             <p className="text-2xl leading-relaxed">
               <strong className="text-[1.7rem]">AI의 능력 경계는 평평하지 않고 톱니처럼 들쑥날쑥하다.</strong>{" "}
               미국 펜실베이니아대 와튼스쿨(The Wharton School) 에단 몰릭(Ethan Mollick) 교수가
-              컨설턴트를 대상으로 한 현장 실험에서 나온 말이다.
+              컨설턴트를 대상으로 한 현장 실험에서 나온 말이다.{" "}
+              <button
+                onClick={() => setSourceOpen(true)}
+                className="brutal-btn bg-brutal-yellow px-4 py-1 text-lg align-middle"
+              >
+                출처
+              </button>
             </p>
             <p className="text-2xl leading-relaxed">
               어려운 걸 해내니 쉬운 것도 당연히 할 거라는 직관이 깨진다.
@@ -412,6 +541,8 @@ export default function HarnessIntro({ onNext }) {
           &copy; 2026 주식회사 에이아이캠프. All rights reserved.
         </p>
       </div>
+
+      {sourceOpen && <SourceModal onClose={() => setSourceOpen(false)} />}
     </div>
   );
 }
