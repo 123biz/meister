@@ -90,7 +90,7 @@ export default function Home() {
           {/* 중앙: 프로그램명 */}
           <div className="flex-1 flex flex-col items-center justify-center gap-2">
             <span className="font-black text-4xl md:text-5xl tracking-wide whitespace-nowrap text-brutal-pink">
-              AI제조혁신 코디네이터/마이스터 커리큘럼
+              AI 제조혁신 코디네이터/마이스터 커리큘럼
             </span>
           </div>
 
