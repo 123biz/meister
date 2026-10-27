@@ -64,7 +64,7 @@ export default function CourseMap({ currentSession = 2 }) {
 
                 <div className="flex flex-wrap gap-3">
                   {session.topics.map((topic) => {
-                    const isExpandable = Boolean(topic.children || topic.columns) && isCurrent;
+                    const isExpandable = Boolean(topic.children || topic.columns || topic.diagram) && isCurrent;
                     const isActive = expandedTopicId === topic.id;
 
                     if (!isExpandable) {
@@ -139,6 +139,37 @@ export default function CourseMap({ currentSession = 2 }) {
                 sizes="100vw"
                 className="w-full h-auto mb-6 border-4 border-brutal-black"
               />
+            )}
+
+            {/* diagram이 있는 주제는 3열 2행 카드 다이어그램으로 먼저 보여준다 */}
+            {expandedTopic.diagram && (
+              <div className="grid grid-cols-3 gap-6">
+                {expandedTopic.diagram.map((item) => (
+                  <div key={item.no} className="border-4 border-brutal-black bg-brutal-white flex flex-col">
+                    <div className={`border-b-4 border-brutal-black px-5 py-3 ${item.bg}`}>
+                      <div className="font-black text-2xl">
+                        {item.no} {item.title}
+                      </div>
+                      <div className="text-lg font-bold opacity-80">{item.role}</div>
+                    </div>
+                    <div className="flex flex-col gap-4 p-5">
+                      <div className="flex items-center gap-5">
+                        <div className="text-6xl leading-none">{item.icon}</div>
+                        <p className="text-lg font-semibold opacity-80">{item.desc}</p>
+                      </div>
+                      {item.examples?.length > 0 && (
+                        <div className="flex flex-wrap gap-2">
+                          {item.examples.map((example) => (
+                            <span key={example} className="border-2 border-brutal-black bg-brutal-cream px-3 py-1 text-lg font-bold">
+                              {example}
+                            </span>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
             )}
 
             {expandedTopic.children && (
